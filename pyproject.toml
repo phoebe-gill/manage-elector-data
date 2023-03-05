@@ -10,6 +10,7 @@ packages = [{include = "manage_elector_data"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 docopt = "^0.6.2"
+openpyxl = "^3.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
