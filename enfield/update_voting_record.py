@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""update_register.py
+"""update_voting_record.py
 
 Usage:
-    update_register.py [-h] FILENAME
+    update_voting_record.py [-h] FILENAME
 """
 from docopt import docopt
 import openpyxl

@@ -5,7 +5,10 @@ description = ""
 authors = ["Phoebe Gill <git@pjgill.net>"]
 license = "GPLv3"
 readme = "README.md"
-packages = [{include = "manage_elector_data"}]
+packages = [
+    {include = "enfield"},
+    {include = "towerhamlets"},
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
