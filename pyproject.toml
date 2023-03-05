@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "manage-elector-data"
+version = "0.1.0"
+description = ""
+authors = ["Phoebe Gill <git@pjgill.net>"]
+license = "GPLv3"
+readme = "README.md"
+packages = [{include = "manage_elector_data"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+docopt = "^0.6.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
