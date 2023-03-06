@@ -14,4 +14,4 @@ TEST_COUNCIL_ELECTOR = CouncilElector(
 
 
 def test_import():
-    assert list(get_council_electors("tests/test_data.xlsx")) == [TEST_COUNCIL_ELECTOR]
+    assert list(get_council_electors("tests/test_council_data.xlsx")) == [TEST_COUNCIL_ELECTOR]
