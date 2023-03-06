@@ -1,4 +1,8 @@
-from towerhamlets.council import CouncilElector, get_council_electors
+from towerhamlets.council import (
+    CouncilElector,
+    get_council_electors,
+    remove_duplicate_postcode,
+)
 
 TEST_COUNCIL_ELECTOR = CouncilElector(
     record_order=1,
@@ -10,10 +14,23 @@ TEST_COUNCIL_ELECTOR = CouncilElector(
     address_1="1 Foo Road",
     address_2="London",
     postcode="E1 1AA",
-    address_3="E1†1AA",
+    address_3=None,
     address_4=None,
 )
 
 
 def test_import():
-    assert next(get_council_electors("tests/test_council_data.xlsx")) == TEST_COUNCIL_ELECTOR
+    assert (
+        next(get_council_electors("tests/test_council_data.xlsx"))
+        == TEST_COUNCIL_ELECTOR
+    )
+
+
+def test_filter_fields():
+    assert remove_duplicate_postcode([None, 1, "", "a", "a†"]) == [
+        None,
+        1,
+        "",
+        "a",
+        None,
+    ]

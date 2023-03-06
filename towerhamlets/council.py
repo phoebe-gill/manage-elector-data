@@ -24,4 +24,18 @@ def get_council_electors(electoral_roll_file_path: str) -> Iterable[CouncilElect
     worksheet = workbook.active
 
     for row in worksheet.iter_rows(min_row=2, values_only=True):  # Skip header
-        yield CouncilElector(*row)
+        yield CouncilElector(*remove_duplicate_postcode(row))
+
+
+def filter_out_fields_containing(element, rejection_string):
+    if isinstance(element, str) and rejection_string in element:
+        return None
+    return element
+
+
+def remove_duplicate_postcode(row: list) -> list:
+    """
+    Each elector has a postcode field, but also has the postcode in an address field.
+    The latter are all of the form 'E1†1AA'. So let's de-duplicate.
+    """
+    return [filter_out_fields_containing(element, "†") for element in row]
