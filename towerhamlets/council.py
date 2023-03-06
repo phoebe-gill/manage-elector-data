@@ -15,6 +15,8 @@ class CouncilElector:
     address_1: str
     address_2: str
     postcode: str
+    address_3: str
+    address_4: str
 
 
 def get_council_electors(electoral_roll_file_path: str) -> Iterable[CouncilElector]:
