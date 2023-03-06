@@ -1,3 +1,6 @@
+"""
+Data from the electoral register, as provided by the council.
+"""
 from dataclasses import dataclass
 from typing import Iterable
 
