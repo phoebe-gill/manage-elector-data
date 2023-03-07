@@ -1,4 +1,5 @@
 from dataclasses import replace
+from datetime import datetime
 import openpyxl
 from tests.test_council_data import TEST_COUNCIL_ELECTOR, TEST_COUNCIL_FILE_PATH
 from tests.test_gp_data import TEST_SOURCE_ELECTOR, TEST_SOURCE_FILE_PATH
@@ -18,7 +19,12 @@ def get_test_destination_electors():
     rows = worksheet.iter_rows(values_only=True, min_row=2)  # Skip header
 
     for row in rows:
-        yield DestinationElector(*row[:23:])
+        elector = DestinationElector(*row[:23:])
+        if isinstance(elector.date_last_knocked, datetime):
+            elector = replace(
+                elector, date_last_knocked=elector.date_last_knocked.date()
+            )
+        yield elector
 
 
 def test_identical_names():

@@ -1,6 +1,17 @@
-from dataclasses import dataclass
+"""match.py
+
+Usage:
+    match.py [-h] COUNCIL_ELECTORAL_ROLL_PATH GP_ELECTORAL_ROLL_PATH OUTPUT_PATH
+
+"""
+from datetime import date, datetime
+from docopt import docopt
+
+from dataclasses import astuple, dataclass
 from typing import Optional
-from towerhamlets.council import CouncilElector
+
+from openpyxl import Workbook
+from towerhamlets.council import CouncilElector, get_council_electors
 from towerhamlets.source import SourceData
 
 
@@ -29,7 +40,35 @@ class DestinationElector:
     parties_considered: Optional[str] = None
     likelihood_to_vote_green: Optional[str] = None
     notes: Optional[str] = None
-    date_last_knocked: Optional[str] = None
+    date_last_knocked: Optional[date] = None
+
+    @classmethod
+    def headers(cls):
+        return (
+            "Elector Number Prefix",
+            "Elector Number",
+            "Elector Markers",
+            "Forename",
+            "Surname",
+            "Address1",
+            "Address2",
+            "Address3",
+            "Address4",
+            "PostCode",
+            "Month first seen on roll",
+            "Ward walk ref",
+            "GLA 2021",
+            "Local 2022",
+            "GP member",
+            "Do not knock",
+            "Do not leaflet",
+            "Displayed poster",
+            "RAG",
+            "Parties considered",
+            "Likelihood to vote Green (1-5)",
+            "Notes",
+            "Date Last Knocked",
+        )
 
     @classmethod
     def create(
@@ -70,8 +109,13 @@ class DestinationElector:
             rag=source_elector.get("RAG"),
             parties_considered=source_elector.get("Parties considered"),
             likelihood_to_vote_green=source_elector.get("1-5"),
-            notes=source_elector.get("Notes"),
-            date_last_knocked=source_elector.get("Date Last Knocked"),
+            notes=source_elector.get("   "),
+            date_last_knocked=(
+                last_knocked.date()
+                if (last_knocked := source_elector.get("Date Last Knocked"))
+                and isinstance(last_knocked, datetime)
+                else last_knocked
+            ),
         )
 
 
@@ -83,6 +127,31 @@ def get_gla_2021_vote(source_entry) -> str:
             return "v"
         case "x GPMem":
             return "x"
-        case "NEW":
+        case "NEW" | "NEW ":
             return None
-    raise Exception(f"Unexpected GLA 2021 voting record entry: {source_entry}")
+    raise Exception(f"Unexpected GLA 2021 voting record entry: '{source_entry}'")
+
+
+def main(council_electoral_roll_path, gp_electoral_roll_path, output_path):
+    council_electors = get_council_electors(council_electoral_roll_path)
+    gp_electors = SourceData(gp_electoral_roll_path)
+    combined_electors = [
+        DestinationElector.create(council_elector, gp_electors)
+        for council_elector in council_electors
+    ]
+
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.append(DestinationElector.headers())
+    for elector in combined_electors:
+        worksheet.append(astuple(elector))
+    workbook.save(output_path)
+
+
+if __name__ == "__main__":
+    arguments = docopt(__doc__)
+    main(
+        arguments["COUNCIL_ELECTORAL_ROLL_PATH"],
+        arguments["GP_ELECTORAL_ROLL_PATH"],
+        arguments["OUTPUT_PATH"],
+    )

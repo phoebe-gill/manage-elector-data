@@ -29,7 +29,7 @@ TEST_SOURCE_ELECTOR = SourceElector(
         "RAG": None,
         "Parties considered": None,
         "1-5": None,
-        "Notes": None,
+        "   ": None,
         "Date Last Knocked": None,
     }
 )

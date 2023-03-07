@@ -130,3 +130,6 @@ dmypy.json
 
 # Excel lock files
 .~lock*
+
+# Location for files containing user data that must not be committed.
+data
