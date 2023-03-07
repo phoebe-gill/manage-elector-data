@@ -1,6 +1,9 @@
 from towerhamlets.source import SourceElector, get_header_names, get_known_electors
 
 
+TEST_SOURCE_FILE_PATH = "tests/test_gp_data.xlsx"
+
+
 TEST_SOURCE_ELECTOR = SourceElector(
     {
         "Elector Number Prefix": "BW1",
@@ -37,4 +40,4 @@ def test_header_names():
 
 
 def test_import():
-    assert next(get_known_electors("tests/test_gp_data.xlsx")) == TEST_SOURCE_ELECTOR
+    assert next(get_known_electors(TEST_SOURCE_FILE_PATH)) == TEST_SOURCE_ELECTOR

@@ -7,7 +7,7 @@ from typing import Iterable, Optional
 import openpyxl
 
 
-@dataclass
+@dataclass(frozen=True)
 class CouncilElector:
     """Order of fields must match column order in source data."""
 

@@ -1,7 +1,7 @@
 """
 Data from our current spreadsheet.
 """
-from typing import Iterable
+from typing import Iterable, Optional
 import openpyxl
 
 
@@ -15,6 +15,17 @@ class SourceElector(dict):
             self["Address3"],
             self["Address4"],
         )
+
+
+class SourceData:
+    def __init__(self, electoral_roll_file_path: str) -> None:
+        self.electors = {
+            elector.get_identifier(): elector
+            for elector in get_known_electors(electoral_roll_file_path)
+        }
+
+    def get_elector(self, identifier: tuple) -> Optional[SourceElector]:
+        return self.electors.get(identifier)
 
 
 def get_known_electors(electoral_roll_file_path: str) -> Iterable[dict]:

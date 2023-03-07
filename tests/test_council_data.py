@@ -4,6 +4,9 @@ from towerhamlets.council import (
     remove_duplicate_postcode,
 )
 
+TEST_COUNCIL_FILE_PATH = "tests/test_council_data.xlsx"
+
+
 TEST_COUNCIL_ELECTOR = CouncilElector(
     record_order=1,
     number_prefix="BW1",
@@ -20,10 +23,7 @@ TEST_COUNCIL_ELECTOR = CouncilElector(
 
 
 def test_import():
-    assert (
-        next(get_council_electors("tests/test_council_data.xlsx"))
-        == TEST_COUNCIL_ELECTOR
-    )
+    assert next(get_council_electors(TEST_COUNCIL_FILE_PATH)) == TEST_COUNCIL_ELECTOR
 
 
 def test_filter_fields():
