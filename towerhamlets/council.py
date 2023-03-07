@@ -2,24 +2,36 @@
 Data from the electoral register, as provided by the council.
 """
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, Optional
 
 import openpyxl
 
 
 @dataclass
 class CouncilElector:
+    """Order of fields must match column order in source data."""
+
     record_order: int
     number_prefix: str
     number: int
-    marker: str
+    markers: str
     surname: str
     forename: str
     address_1: str
-    address_2: str
+    address_2: Optional[str]
     postcode: str
-    address_3: str
-    address_4: str
+    address_3: Optional[str]
+    address_4: Optional[str]
+
+    def get_identifier(self) -> tuple:
+        """We assume that the same address with the same name is the same person."""
+        return (
+            f"{self.surname} {self.forename}",
+            self.address_1,
+            self.address_2,
+            self.address_3,
+            self.address_4,
+        )
 
 
 def get_council_electors(electoral_roll_file_path: str) -> Iterable[CouncilElector]:
