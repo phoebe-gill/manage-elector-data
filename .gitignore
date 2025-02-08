@@ -133,3 +133,4 @@ dmypy.json
 
 # Location for files containing user data that must not be committed.
 data
+processed_data
