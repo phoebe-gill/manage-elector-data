@@ -11,7 +11,11 @@ from dataclasses import astuple, dataclass
 from typing import Optional
 
 from openpyxl import Workbook
-from towerhamlets.council import CouncilElector, get_council_electors
+from towerhamlets.council import (
+    CouncilElector,
+    get_council_electors,
+    filter_out_post_code,
+)
 from towerhamlets.source import SourceData
 
 
@@ -19,15 +23,16 @@ from towerhamlets.source import SourceData
 class DestinationElector:
     number_prefix: str
     number: int
+    suffix: int
     markers: Optional[str]
-    forename: str
+    date_of_birth: Optional[str]
     surname: str
-    address_1: str
+    forename: str
+    address_1: Optional[str]
     address_2: Optional[str]
     address_3: Optional[str]
     address_4: Optional[str]
-    postcode: str
-
+    postcode: Optional[str]
     month_first_seen: Optional[str] = None
     ward_walk_reference: Optional[int] = None
     gla_2021: Optional[str] = None
@@ -47,9 +52,11 @@ class DestinationElector:
         return (
             "Elector Number Prefix",
             "Elector Number",
+            "Elector Number Suffix",
             "Elector Markers",
-            "Forename",
+            "Elector DOB",
             "Surname",
+            "Forename",
             "Address1",
             "Address2",
             "Address3",
@@ -77,39 +84,41 @@ class DestinationElector:
         source_data: SourceData,
     ) -> "DestinationElector":
         source_elector = source_data.get_elector(council_elector.get_identifier()) or {}
+
+        if not source_elector:
+            print(f"New elector: {council_elector.forename} {council_elector.surname}")
+
         return DestinationElector(
             number_prefix=council_elector.number_prefix,
             number=council_elector.number,
+            suffix=council_elector.suffix,
             markers=council_elector.markers,
-            surname=council_elector.surname,
-            forename=council_elector.forename,
+            date_of_birth=council_elector.date_of_birth,
+            surname=council_elector.surname.strip(),
+            forename=council_elector.forename.strip(),
             address_1=council_elector.address_1,
             address_2=council_elector.address_2,
-            address_3=council_elector.address_3,
-            address_4=council_elector.address_4,
+            address_3=filter_out_post_code(council_elector.address_3),
+            address_4=filter_out_post_code(council_elector.address_4),
             postcode=council_elector.postcode,
-            month_first_seen=(
-                "2022 December"
-                if not source_elector
-                else "2021 May"
-                if source_elector.get("GLA") == "NEW"
-                else None
-            ),
-            ward_walk_reference=source_elector.get("Ward wark ref"),
-            gla_2021=get_gla_2021_vote(source_elector.get("GLA")),
-            local_2022=source_elector.get("Local 2022"),
-            gp_member=(
-                "y"
-                if source_elector.get("GLA") and "v GPMem" in source_elector.get("GLA")
-                else None
-            ),
-            do_not_knock="DNK" if source_elector.get("DNK?") else None,
-            do_not_leaflet="DNL" if source_elector.get("No leaflets?") else None,
-            displayed_poster="y" if source_elector.get("Poster?") else None,
+            month_first_seen=source_elector.get("Month first seen on roll")
+            if source_elector
+            else "2024 December",
+            ward_walk_reference=source_elector.get("Ward walk ref"),
+            gla_2021=source_elector.get("GLA 2021"),
+            local_2022=(source_elector.get("Local 2022") or 0)
+            if source_elector
+            else None,
+            gp_member=source_elector.get("GP member"),
+            do_not_knock=source_elector.get("Do not knock"),
+            do_not_leaflet=source_elector.get("Do not leaflet"),
+            displayed_poster=source_elector.get("Displayed poster"),
             rag=source_elector.get("RAG"),
             parties_considered=source_elector.get("Parties considered"),
-            likelihood_to_vote_green=source_elector.get("1-5"),
-            notes=source_elector.get("   "),
+            likelihood_to_vote_green=source_elector.get(
+                "Likelihood to vote Green (1-5)"
+            ),
+            notes=source_elector.get("Notes"),
             date_last_knocked=(
                 last_knocked.date()
                 if (last_knocked := source_elector.get("Date Last Knocked"))

@@ -19,7 +19,7 @@ def get_test_destination_electors():
     rows = worksheet.iter_rows(values_only=True, min_row=2)  # Skip header
 
     for row in rows:
-        elector = DestinationElector(*row[:23:])
+        elector = DestinationElector(*row[:25:])
         if isinstance(elector.date_last_knocked, datetime):
             elector = replace(
                 elector, date_last_knocked=elector.date_last_knocked.date()

@@ -9,11 +9,14 @@ class SourceElector(dict):
     def get_identifier(self) -> tuple:
         """We assume that the same address with the same name is the same person."""
         return (
-            self["Elector Name"],
+            self["Surname"],
+            self["Forename"],
             self["Address1"],
             self["Address2"],
             self["Address3"],
             self["Address4"],
+            None,
+            None,
         )
 
 
@@ -33,17 +36,15 @@ def get_known_electors(electoral_roll_file_path: str) -> Iterable[dict]:
     worksheet = workbook.active
     rows = worksheet.iter_rows(values_only=True)
 
-    headers = get_header_names(next(rows))
+    headers = next(rows)
 
     for row in rows:
+        if not row[0]:
+            # All electors have a prefix, so this must be an empty row
+            continue
         yield SourceElector(
             {
                 key: value.strip() if isinstance(value, str) else value
                 for (key, value) in zip(headers, row)
             }
         )
-
-
-def get_header_names(row: tuple) -> list[str]:
-    """One column doesn't have a header."""
-    return [element or "Notes" for element in row]
