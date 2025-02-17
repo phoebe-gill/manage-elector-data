@@ -8,7 +8,7 @@ from datetime import date, datetime
 from docopt import docopt
 
 from dataclasses import astuple, dataclass
-from typing import Optional
+from typing import Literal, Optional
 
 from openpyxl import Workbook
 from towerhamlets.council import (
@@ -35,8 +35,13 @@ class DestinationElector:
     postcode: Optional[str]
     month_first_seen: Optional[str] = None
     ward_walk_reference: Optional[int] = None
-    gla_2021: Optional[str] = None
-    local_2022: Optional[str] = None
+    # Key:
+    #  v = voted in person
+    #  x = voted by post
+    #  0 = did not vote
+    #  None = was not on the electoral register at the time this vote took place
+    gla_2021: Literal["v", "x", 0, None] = None
+    local_2022: Literal["v", "x", 0, None] = None
     gp_member: Optional[str] = None
     do_not_knock: Optional[str] = None
     do_not_leaflet: Optional[str] = None

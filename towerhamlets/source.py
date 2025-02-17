@@ -5,6 +5,7 @@ import re
 from typing import Iterable, Optional
 import openpyxl
 
+
 def get_letters_only(s: str):
     return "".join(filter(lambda c: re.match("[ a-zA-Z]", c), s))
 
