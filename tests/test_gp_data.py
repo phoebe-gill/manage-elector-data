@@ -9,7 +9,7 @@ TEST_SOURCE_ELECTOR = SourceElector(
         "Elector Number Prefix": "BW1",
         "Elector Number": 1,
         "Elector Markers": None,
-        "Surname": "A",
+        "Surname": "O`A",
         "Forename": "B",
         "Address1": "2 Foo Road",
         "Address2": "London",

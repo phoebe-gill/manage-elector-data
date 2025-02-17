@@ -7,6 +7,8 @@ from typing import Iterable, Optional
 
 import openpyxl
 
+from towerhamlets.source import get_letters_only
+
 
 @dataclass(frozen=True)
 class CouncilElector:
@@ -30,8 +32,8 @@ class CouncilElector:
     def get_identifier(self) -> tuple:
         """We assume that the same address with the same name is the same person."""
         return (
-            self.surname,
-            self.forename,
+            get_letters_only(self.surname),
+            get_letters_only(self.forename),
             self.address_1,
             self.address_2,
             filter_out_post_code(self.address_3),

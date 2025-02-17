@@ -1,16 +1,20 @@
 """
 Data from our current spreadsheet.
 """
+import re
 from typing import Iterable, Optional
 import openpyxl
+
+def get_letters_only(s: str):
+    return "".join(filter(lambda c: re.match("[ a-zA-Z]", c), s))
 
 
 class SourceElector(dict):
     def get_identifier(self) -> tuple:
         """We assume that the same address with the same name is the same person."""
         return (
-            self["Surname"],
-            self["Forename"],
+            get_letters_only(self["Surname"]),
+            get_letters_only(self["Forename"]),
             self["Address1"],
             self["Address2"],
             self["Address3"],
