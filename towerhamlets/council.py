@@ -52,6 +52,6 @@ def get_council_electors(electoral_roll_file_path: str) -> Iterable[CouncilElect
 
 
 def filter_out_post_code(address_component: Optional[str]):
-    if address_component and re.fullmatch(r"E\d \d\w\w", address_component):
+    if address_component and re.fullmatch(r"E\d\W\d\w\w", address_component):
         return None
     return address_component
