@@ -36,7 +36,12 @@ def get_known_electors(electoral_roll_file_path: str) -> Iterable[dict]:
     headers = get_header_names(next(rows))
 
     for row in rows:
-        yield SourceElector({key: value for (key, value) in zip(headers, row)})
+        yield SourceElector(
+            {
+                key: value.strip() if isinstance(value, str) else value
+                for (key, value) in zip(headers, row)
+            }
+        )
 
 
 def get_header_names(row: tuple) -> list[str]:
