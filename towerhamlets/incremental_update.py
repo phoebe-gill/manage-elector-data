@@ -35,6 +35,8 @@ class Instruction:
 
 
 def get_operation(row):
+    if int(row["ElectorDeletedMonth"]) and int(row["ElectorCreatedMonth"]):
+        return None
     if int(row["ElectorDeletedMonth"]):
         return "delete"
     if int(row["ElectorCreatedMonth"]):
@@ -45,17 +47,21 @@ def get_operation(row):
 
 
 def get_instructions(incremental_update_path: str):
-    with open(incremental_update_path) as f:
+    with open(incremental_update_path, encoding="windows-1252") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
+            operation = get_operation(row)
+            if not operation:
+                continue
+
             match = re.fullmatch(r"(\w\w\d)-(\d+)(/(\d+))?", row["ElectorNumber"])
             prefix = match.group(1)
             number = match.group(2)
             suffix = match.group(4)
 
             yield Instruction(
-                operation=get_operation(row),
+                operation=operation,
                 prefix=prefix,
                 number=int(number),
                 suffix=int(suffix or 0),
