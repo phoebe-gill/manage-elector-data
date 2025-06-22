@@ -83,6 +83,7 @@ def get_electors(worksheet: Worksheet) -> dict[tuple[str, int, int], list]:
         for prefix, number, suffix, *data in worksheet.iter_rows(
             min_row=2, values_only=True
         )
+        if prefix is not None
     }
 
 
